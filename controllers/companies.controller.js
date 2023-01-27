@@ -59,12 +59,56 @@ exports.fetchCompanies=async(req,res)=>{
 }
 //Fetch company by companyCode
 exports.fetchCompaniesByCompanyCode=async(req,res)=>{
+
     try {
         companyModel.find({companycode:req.params.companycode}).then((companieslist) => {
             if (companieslist.length>0) {
                 return apiResponses.successResponseWithData(res, "Fetched companies list Successfully", companieslist);
             } else {
                 return apiResponses.notFoundResponse(res, "companieslist list Not Found");
+            }
+        })
+    } catch (e) {
+        return apiResponses.errorResponse(res, e);
+    }
+}
+
+//Update Company  by id
+exports.updateCompaniesById=async(req,res)=>{
+    const company={
+    
+        companycode:req.body.companycode,
+        name:req.body.name,
+        address:req.body.address,
+        state:req.body.state,
+        city:req.body.city,
+        pincode:req.body.pincode          
+}
+const id = req.params.id;
+
+    try {
+        companyModel.updateOne({ _id: id }, company).then((companiesdata) => {
+            if (companiesdata) {
+                return apiResponses.successResponseWithData(res, "updated companies  Successfully", companiesdata);
+            } else {
+                return apiResponses.notFoundResponse(res, "companies data Not Found");
+            }
+        })
+    } catch (e) {
+        return apiResponses.errorResponse(res, e);
+    }
+}
+
+//Delete Company by Id
+exports.deleteCompaniesById=async(req,res)=>{
+    const id = req.params.id;
+
+    try {
+        companyModel.findOneAndDelete({ _id: id }).then((companiesdata) => {
+            if (companiesdata) {
+                return apiResponses.successResponseWithData(res, "Delete company Succuessfully", companiesdata);
+            } else {
+                return apiResponses.notFoundResponse(res, "Data Not Found");
             }
         })
     } catch (e) {
